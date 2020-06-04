@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "181349342988",
+    "firebase_url": "https://whatsapp-fdf23.firebaseio.com",
+    "project_id": "whatsapp-fdf23",
+    "storage_bucket": "whatsapp-fdf23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181349342988:android:1beec0cda3852cd80f3329",
+        "android_client_info": {
+          "package_name": "com.br.whatsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "181349342988-lkmdtn54g8jan1mm3v6aij4pnkbeshsa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZcwBPknBffX94E0L8JV3FyDZhFPv_kh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "181349342988-lkmdtn54g8jan1mm3v6aij4pnkbeshsa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
