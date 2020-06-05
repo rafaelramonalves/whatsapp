@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp/Cadastro.dart';
 import 'package:whatsapp/Home.dart';
+
+import 'model/Usuario.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -9,24 +13,23 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-  final _formKey = GlobalKey<FormState>();
-  final _key = GlobalKey<ScaffoldState>();
-
-  TextEditingController _controllerEmail;
-  TextEditingController _controllerSenha;
+  //Controladores
+  TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _controllerSenha = TextEditingController();
+  String _mensagemErro = "";
 
   @override
   void initState() {
-    // TODO: implement initState
-    _controllerEmail = TextEditingController();
-    _controllerSenha = TextEditingController();
-  }
 
+    // Verificar se o usuario já está logado
+    verificaUsusarioLogado();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _key,
       body: Form(
         child: Container(
           decoration: BoxDecoration(
@@ -62,6 +65,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   TextField(
+                    obscureText: true,
                     key: Key("senha-field"),
                     controller: _controllerSenha,
                     keyboardType: TextInputType.text,
@@ -92,10 +96,7 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(32)
                       ),
                       onPressed: (){
-                        Navigator.push(context,
-                        MaterialPageRoute(
-                          builder: (context) =>Home()
-                        ));
+                        validarCamposLogin();
                       },
                     ),
                   ),
@@ -117,12 +118,94 @@ class _LoginState extends State<Login> {
                       },
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.only(top:16),
+                    child: Center(
+                      child: Text(
+                        _mensagemErro,
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
           ),
         ),
       ),
+
     );
+  }
+
+  void validarCamposLogin() {
+    String email =_controllerEmail.text;
+    String senha =_controllerSenha.text;
+    if(email.isNotEmpty && email.contains("@")){
+
+      if(senha.isNotEmpty ){
+        setState(() {
+          _mensagemErro ="";
+          Usuario usuario;
+          usuario.email = email;
+          usuario.senha = senha;
+          logarUsuario(usuario);
+        });
+
+      }else{
+        setState(() {
+          _mensagemErro="Preencha a senha";
+        });
+      }
+    }else{
+      setState(() {
+        _mensagemErro="Preencha o E-mail corretamente";
+      });
+    }
+  }
+
+  void logarUsuario(Usuario usuario) {
+    
+    //instância do firebase
+    FirebaseAuth auth = FirebaseAuth.instance;
+    //Logar com e-mail e senha
+    auth.createUserWithEmailAndPassword(
+        email: usuario.email,
+        password: usuario.senha
+    ).then((firebasUser){ //Caso de sucesso
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder:(context) => Home()
+          )
+      );
+
+    }).catchError((error){ //Caso de erro
+
+      _mensagemErro = "Erro ao autenticar usuario, verifique o email e senha";
+    });
+  }
+
+  //Verfificar se o usuario já esta logado no firebase
+  Future verificaUsusarioLogado() async{
+
+    //pegar instancia do usuario
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    //Pegar o ususario que está logado no firebase
+    FirebaseUser usuarioLogado = await auth.currentUser();
+
+    //Se o ususario está logado, então ja vai para a tela principal do app
+    if(usuarioLogado !=null){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Home()
+          )
+      );
+    }
   }
 }
